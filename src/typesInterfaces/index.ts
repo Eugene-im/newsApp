@@ -28,7 +28,10 @@ export interface ArticleActions {
   addArticles: Action<ArticlesStoreModel, ArticleProps[]>;
   clearArticles: Action<ArticlesStoreModel>;
   clearCurrentArticle: Action<ArticlesStoreModel>;
+  setError: Action<ArticlesStoreModel, any>;
+  resetError: Action<ArticlesStoreModel>;
   getNews: Thunk<ArticlesStoreModel, ApiResponse>;
+  searchNews: Thunk<ArticlesStoreModel, string>;
   getCurrentArticle: Action<ArticlesStoreModel, { id: string }>;
 }
 
@@ -37,4 +40,5 @@ export interface ArticlesStoreModel
   articles: ArticleProps[];
   currentArticle: ArticleProps;
   loading: boolean;
+  error: string;
 }

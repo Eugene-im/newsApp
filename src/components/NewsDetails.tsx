@@ -20,15 +20,14 @@ export function NewsDetails() {
   }, []);
   return (
     <div>
-      <h2>About</h2>
-      {!currentArticle && <h2>Not Found</h2>}
+      {!currentArticle.content && <h2>Not Found</h2>}
       {currentArticle && (
         <>
           <h2>{currentArticle.title}</h2>
           <img src={currentArticle.urlToImage} alt={currentArticle.title} />
           <p>{currentArticle.description}</p>
           <p>
-            {currentArticle.content.split("… [")[0]}...
+            {currentArticle.content.split("…")[0]}...
             <Link to={currentArticle.url}>read more</Link>
           </p>
           <p>{currentArticle.publishedAt}</p>

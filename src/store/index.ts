@@ -1,7 +1,7 @@
 import { action, createStore, persist, thunk } from "easy-peasy";
 import { API } from "../core/api";
 import { ArticleProps, ArticlesStoreModel } from "../typesInterfaces";
-import { v4 as uuidv4 } from "uuid";
+import { updatedDataId } from "../helpers";
 import { MOKDATA } from "../mokdata";
 
 export const store = createStore<ArticlesStoreModel>(
@@ -9,13 +9,16 @@ export const store = createStore<ArticlesStoreModel>(
     articles: [],
     currentArticle: {} as ArticleProps,
     loading: true,
+    error: "",
     addArticles: action((state, payload) => {
       state.articles = [...payload];
-      console.log(
-        "🚀 ~ file: index.ts:13 ~ addArticles:action ~ state.articles:",
-        state.articles
-      );
       state.loading = false;
+    }),
+    setError: action((state, payload) => {
+      state.error = JSON.stringify(payload);
+    }),
+    resetError: action((state) => {
+      state.error = "";
     }),
     clearArticles: action((state) => {
       state.articles = [];
@@ -29,28 +32,31 @@ export const store = createStore<ArticlesStoreModel>(
         if (process.env.NODE_ENV === "development") {
           actions.addArticles(MOKDATA.articles);
         } else {
-          const res = await API.get("/top-headlines?sources=bbc-news");
-          const updatedData = res.data.articles.map((item: ArticleProps) => {
-            return { ...item, id: uuidv4() };
-          });
+          const res = await API.get(
+            "/top-headlines?sources=bbc-news&pageSize=30"
+          );
+          const updatedData = updatedDataId(res.data.articles);
           actions.addArticles(updatedData);
         }
       } catch (error) {
         console.log(error);
+        actions.setError({ error: "test error" });
+      }
+    }),
+    searchNews: thunk(async (actions, payload) => {
+      try {
+        const res = await API.get(`/everything?q=${payload}&searchIn=title`);
+        const updatedData = updatedDataId(res.data.articles);
+        actions.addArticles(updatedData);
+      } catch (error) {
+        console.log(error);
+        actions.setError({ error: "test error" });
       }
     }),
     getCurrentArticle: action((state, payload) => {
-      // console.log("🚀 ~ file: index.ts:39 ~ getCurrentArticle:action ~ payload:", payload)
-      console.log(
-        "🚀 ~ file: index.ts:41 ~ getCurrentArticle:action ~ state:",
-        state
-      );
       state.currentArticle =
         state.articles.find((article) => article.id === payload.id) ||
         ({} as ArticleProps);
-      // console.log("🚀 ~ file: index.ts:42 ~ getCurrentArticle:action ~ state.articles:", state.articles)
-      // console.log("🚀 ~ file: index.ts:42 ~ getCurrentArticle:action ~ state.articles.find((article) => article.id === payload.id):", state.articles.filter((article) => article.id === payload.id))
-      console.log("🚀 ~ file: index.ts:40 ~ getCurrentArticle:action ~ state.currentArticle:", state.currentArticle)
     }),
   })
 );
