@@ -27,20 +27,22 @@ export const store = createStore<ArticlesStoreModel>(
       state.currentArticle = {} as ArticleProps;
     }),
     getNews: thunk(async (actions, payload) => {
+      let data;
       try {
         // TODO - remove this if statement
         if (process.env.NODE_ENV === "development") {
-          actions.addArticles(MOKDATA.articles);
+          data = MOKDATA.articles;
         } else {
           const res = await API.get(
             "/top-headlines?sources=bbc-news&pageSize=30"
           );
-          const updatedData = updatedDataId(res.data.articles);
-          actions.addArticles(updatedData);
+          data = res.data.articles;
         }
+        const updatedData = updatedDataId(data);
+        actions.addArticles(updatedData);
       } catch (error) {
         console.log(error);
-        actions.setError({ error: "test error" });
+        actions.setError({ error });
       }
     }),
     searchNews: thunk(async (actions, payload) => {
@@ -50,7 +52,7 @@ export const store = createStore<ArticlesStoreModel>(
         actions.addArticles(updatedData);
       } catch (error) {
         console.log(error);
-        actions.setError({ error: "test error" });
+        actions.setError({ error });
       }
     }),
     getCurrentArticle: action((state, payload) => {
