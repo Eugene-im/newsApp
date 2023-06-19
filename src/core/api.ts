@@ -1,7 +1,5 @@
 import axios from "axios";
 
-// const service = vaultService();
-
 const axiosConfig = {
   baseURL: process.env.REACT_APP_API_URL,
   apiKey: process.env.REACT_APP_NEWS_API_KEY,
@@ -10,16 +8,12 @@ const axiosConfig = {
 const instance = axios.create(axiosConfig);
 
 instance.interceptors.request.use(
-  async (req) => {
-    const accessToken = axiosConfig.apiKey;
-    if (accessToken && req.headers) {
-      req.headers.from = new Date().toISOString();
-      req.headers.apiKey = accessToken;
-    }
+  (req) => {
+    req.headers["Authorization"] = `Bearer ${axiosConfig.apiKey}`;
     return req;
   },
-  (err) => {
-    throw err;
+  (error) => {
+    return Promise.reject(error);
   }
 );
 
