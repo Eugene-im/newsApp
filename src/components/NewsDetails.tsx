@@ -1,8 +1,9 @@
+import { useStoreState } from "easy-peasy";
 import { Link } from "react-router-dom";
-import { store } from "../store";
+import { ArticlesStoreModel } from "../typesInterfaces";
 
 export function NewsDetails() {
-  const { currentArticle } = store.getState()
+  const { currentArticle } = useStoreState((state: ArticlesStoreModel) => state);
 
   return (
     <>

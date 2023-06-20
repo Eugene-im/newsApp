@@ -1,32 +1,21 @@
-import { Box, Skeleton, Typography } from "@mui/material";
-import { ArticleProps } from "../typesInterfaces";
+import React from "react";
+import { ArticleProps, ArticlesStoreModel } from "../typesInterfaces";
 import { store } from "../store";
+import { Box, Skeleton, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
+import { Actions, useStoreActions } from "easy-peasy";
 
-export const Post = ({
-  article,
-  index,
-  ref,
-}: {
-  article?: ArticleProps;
-  index: number;
-  ref?: any;
-}) => {
-  const { setCurrentArticle } = store.getActions();
+const Post = React.forwardRef(({ article }: { article: ArticleProps }, ref) => {
+  const { setCurrentArticle } = useStoreActions((actions: Actions<ArticlesStoreModel>) => actions);
   const redirectTo = async (href: string) => {
-    // Firstly ensure that any outstanding persist operations are complete.
-    // Note that this is an asynchronous operation so we will await on it.
-    article && setCurrentArticle({ article });
+    article && setCurrentArticle({ article: article });
     await store.persist.flush();
-
-    // We can now safely redirect the browser
     window.location.href = href;
   };
-  return (
+  const articleBody = (
     <Box
-      key={article?.id || index}
       sx={{ width: 210, marginRight: 0.5, my: 5 }}
-      {...ref}
+      ref={ref}
     >
       {article?.urlToImage ? (
         <Link
@@ -77,4 +66,15 @@ export const Post = ({
       )}
     </Box>
   );
-};
+
+  const content = ref ? (
+    // @ts-ignore
+    <article ref={ref}>{articleBody}</article>
+  ) : (
+    <article>{articleBody}</article>
+  );
+
+  return content;
+});
+
+export default Post;

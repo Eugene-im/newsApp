@@ -24,12 +24,7 @@ export const store = createStore<ArticlesStoreModel>(
       resetError: action((state) => {
         state.error = "";
       }),
-      clearArticles: action((state) => {
-        state.articles = [];
-      }),
-      clearCurrentArticle: action((state) => {
-        state.currentArticle = {} as ArticleProps;
-      }),
+
       getNews: thunk(async (actions) => {
         let data;
         try {
@@ -57,7 +52,6 @@ export const store = createStore<ArticlesStoreModel>(
             }`
           );
           const updatedData = updatedDataId(res.data.articles);
-          // actions.clearArticles();
           actions.addArticles(updatedData);
         } catch (error) {
           console.log(error);

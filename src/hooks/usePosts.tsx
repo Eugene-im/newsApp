@@ -1,28 +1,34 @@
 import { useState, useEffect } from "react";
+import { API } from "../core/api";
+import { updatedDataId } from "../helpers";
 // import { getPostsPage } from '../api/axios'
 
-import axios from "axios";
+// import axios from "axios";
 
-export const api = axios.create({
-  baseURL: "https://jsonplaceholder.typicode.com",
-});
+// export const api = axios.create({
+//   baseURL: "https://jsonplaceholder.typicode.com",
+// });
 
 export const getPostsPage = async (pageParam = 1, options = {}) => {
-  const response = await api.get(`/posts?_page=${pageParam}`, options);
-  return response.data;
+  const response = await API.get(
+    `/everything?q=bitcoin&searchIn=title&pageSize=20&page=${pageParam}`,
+    options
+  );
+  const updatedData = updatedDataId(response.data.articles);
+  return updatedData;
 };
 
 const usePosts = (pageNum = 1) => {
   const [results, setResults] = useState<any>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
-  const [error, setError] = useState({});
+  const [error, setError] = useState<{ message: any }|null>(null);
   const [hasNextPage, setHasNextPage] = useState(false);
 
   useEffect(() => {
     setIsLoading(true);
     setIsError(false);
-    setError({});
+    setError(null);
 
     const controller = new AbortController();
     const { signal } = controller;

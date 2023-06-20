@@ -1,8 +1,9 @@
 import { OutlinedInput } from "@mui/material";
-import { store } from "../store";
+import { Actions, useStoreActions } from "easy-peasy";
+import { ArticlesStoreModel } from "../typesInterfaces";
 
 export const Search = () => {
-  const { searchNews, getNews } = store.getActions();
+  const { searchNews, getNews } = useStoreActions((actions: Actions<ArticlesStoreModel>) => actions);
 
   const hadleSearch = (event: any) => {
     if (event.target.value) {
