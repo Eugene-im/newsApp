@@ -1,11 +1,11 @@
-import { useStoreRehydrated, useStoreState } from "easy-peasy";
+import { useStoreRehydrated } from "easy-peasy";
 import { Outlet } from "react-router-dom";
-import { ArticlesStoreModel } from "../typesInterfaces";
 import { ErrorToast } from "./ErrorToast";
 import { Search } from "./Search";
+import { store } from "../store";
 
 export function Layout() {
-  const { error } = useStoreState((state: ArticlesStoreModel) => state);
+  const { error } = store.getState();
   const isRehydrated = useStoreRehydrated();
   return (
     <div className="App">

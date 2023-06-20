@@ -1,12 +1,12 @@
 import { OutlinedInput } from "@mui/material";
-import { useStoreActions } from "easy-peasy";
+import { store } from "../store";
 
 export const Search = () => {
-  const { searchNews, getNews } = useStoreActions((actions: any) => actions);
+  const { searchNews, getNews } = store.getActions();
 
   const hadleSearch = (event: any) => {
     if (event.target.value) {
-      searchNews(event.target.value);
+      searchNews({ query: event.target.value });
     } else {
       getNews();
     }

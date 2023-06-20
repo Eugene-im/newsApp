@@ -30,15 +30,14 @@ export interface ArticleActions {
   clearCurrentArticle: Action<ArticlesStoreModel>;
   setError: Action<ArticlesStoreModel, any>;
   resetError: Action<ArticlesStoreModel>;
-  getNews: Thunk<ArticlesStoreModel, ApiResponse>;
-  searchNews: Thunk<ArticlesStoreModel, string>;
-  getCurrentArticle: Action<ArticlesStoreModel, { id: string }>;
+  getNews: Thunk<ArticlesStoreModel>;
+  searchNews: Thunk<ArticlesStoreModel, { page?: string; query?: string }>;
+  setCurrentArticle: Action<ArticlesStoreModel, { article: ArticleProps }>;
 }
 
-export interface ArticlesStoreModel
-  extends ArticleActions {
+export interface ArticlesStoreModel extends ArticleActions {
   articles: ArticleProps[];
   currentArticle: ArticleProps;
-  loading: boolean;
   error: string;
+  filter: { page?: string; query?: string; hot?: boolean };
 }

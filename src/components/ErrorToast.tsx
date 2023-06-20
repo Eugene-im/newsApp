@@ -1,8 +1,8 @@
-import { useStoreActions } from "easy-peasy";
 import { useEffect } from "react";
+import { store } from "../store";
 
 export const ErrorToast = ({ message }: { message: string }) => {
-    const {resetError} = useStoreActions((actions: any) => actions);
+    const {resetError} = store.getActions();
     useEffect(() => {
         console.log("🚀 ~ file: ErrorToast.tsx:15 ~ ErrorToast ~ message:", message)
         setTimeout(() => {
