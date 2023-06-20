@@ -19,10 +19,6 @@ const errorStyle = {
 export const ErrorToast = ({ message }: { message: string }) => {
   const { resetError } = useStoreActions((actions: Actions<ArticlesStoreModel>) => actions);
   useEffect(() => {
-    console.log(
-      "🚀 ~ file: ErrorToast.tsx:15 ~ ErrorToast ~ message:",
-      message
-    );
     setTimeout(() => {
       resetError();
     }, 3000);

@@ -1,15 +1,12 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import usePosts from "../hooks/usePosts";
 import { ArticleProps, ArticlesStoreModel } from "../typesInterfaces";
 import Post from "./Post";
 import { Grid } from "@mui/material";
 import { Actions, useStoreActions } from "easy-peasy";
-import { ErrorToast } from "./ErrorToast";
 
 const InfiniteScroll = () => {
   const [pageNum, setPageNum] = useState(1);
-  // const { error } = useStoreState((state: ArticlesStoreModel) => state);
-
   const { setError } = useStoreActions(
     (actions: Actions<ArticlesStoreModel>) => actions
   );
@@ -17,8 +14,8 @@ const InfiniteScroll = () => {
 
   const intObserver = useRef();
   const lastPostRef = useCallback(
-    (post: ArticleProps) => {
-      if (isLoading || isError) return;
+    (post: ArticleProps | null) => {
+      if (isLoading) return;
       //@ts-ignore
       if (intObserver.current) intObserver.current.disconnect();
       //@ts-ignore
@@ -34,8 +31,13 @@ const InfiniteScroll = () => {
     },
     [isLoading, hasNextPage]
   );
+  useEffect(() => {
+    isError && lastPostRef(null);
+  }, [lastPostRef, isError]);
 
-  if (isError) setError({ error: error?.message || error });
+  if (isError) {
+    setError({ error: error?.message || error });
+  }
 
   const content = results.map((post: ArticleProps, i: number) => {
     if (results.length === i + 1) {
@@ -51,7 +53,6 @@ const InfiniteScroll = () => {
       </Grid>
       {isLoading && <p className="center">Loading More Posts...</p>}
       <a href="#top">Back to Top</a>
-      {!!error && <ErrorToast message={error as any} />}
     </>
   );
 };
