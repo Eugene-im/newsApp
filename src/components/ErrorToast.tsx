@@ -2,39 +2,25 @@ import { Actions, useStoreActions } from "easy-peasy";
 import { useEffect } from "react";
 import { ArticlesStoreModel } from "../typesInterfaces";
 
-const errorStyle = {
-  position: "fixed",
-  top: "0",
-  left: "0",
-  width: "100%",
-  height: "100%",
-  background: "rgba(0,0,0,0.5)",
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  zIndex: 100,
-  transition: "all 0.3s ease",
-};
-
 export const ErrorToast = ({ message }: { message: string }) => {
   const { resetError } = useStoreActions(
     (actions: Actions<ArticlesStoreModel>) => actions
   );
+
+  const handleClick = () => {
+    resetError();
+  };
+
   useEffect(() => {
     setTimeout(() => {
       resetError();
     }, 3000);
   }, [resetError]);
-  const handleClick = () => {
-    resetError();
-  };
+  
   return (
     <div
-      className="error-toast"
-      // TODO: remove ts-ignore
-      //@ts-ignore
-      style={{ ...errorStyle }}
       onClick={handleClick}
+      className="error-toast fixed top-0 left-0 w-full h-full bg-gray-900 bg-opacity-50 flex items-center justify-center"
     >
       <div
         id="toast-danger"
@@ -50,9 +36,9 @@ export const ErrorToast = ({ message }: { message: string }) => {
             xmlns="http://www.w3.org/2000/svg"
           >
             <path
-              fill-rule="evenodd"
+              fillRule="evenodd"
               d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-              clip-rule="evenodd"
+              clipRule="evenodd"
             ></path>
           </svg>
           <span className="sr-only">Error icon</span>
@@ -73,9 +59,9 @@ export const ErrorToast = ({ message }: { message: string }) => {
             xmlns="http://www.w3.org/2000/svg"
           >
             <path
-              fill-rule="evenodd"
+              fillRule="evenodd"
               d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-              clip-rule="evenodd"
+              clipRule="evenodd"
             ></path>
           </svg>
         </button>

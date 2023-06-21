@@ -17,23 +17,24 @@ const usePosts = (
     (actions: Actions<ArticlesStoreModel>) => actions
   );
 
-  const intObserver = useRef();
+  const intObserver = useRef<HTMLDivElement>();
   const lastPostRef = useCallback(
     (post: ArticleProps | null) => {
       if (isLoading) return;
       // TODO: remove ts-ignore
       //@ts-ignore
+
       if (intObserver.current) intObserver.current.disconnect();
       //@ts-ignore
 
       intObserver.current = new IntersectionObserver((posts) => {
         if (posts[0].isIntersecting && hasNextPage) {
-          console.log("We are near the last post!");
           setPageNum((prev) => prev + 1);
         }
       });
       //@ts-ignore
-      if (post) intObserver.current.observe(post);
+
+      if (post && intObserver.current) intObserver.current.observe(post);
     },
     // eslint-disable-next-line
     [isLoading, hasNextPage]
@@ -43,7 +44,7 @@ const usePosts = (
   }, [lastPostRef, isError]);
 
   useEffect(() => {
-    searchNews({ page: pageNum, q: "bitcoin" } as FilterPropsEvery);
+    searchNews({ page: pageNum } as FilterPropsEvery);
   }, [pageNum, searchNews]);
   return lastPostRef;
 };

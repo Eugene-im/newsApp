@@ -26,10 +26,10 @@ export interface ApiResponse {
 }
 
 export interface FilterPropsEvery extends everythingReqSearchProps {
-  hot?: boolean;
+  hot?: hotEnum;
 }
 export interface FilterPropsTop extends topHeadlinesReqSearchProps {
-  hot?: boolean;
+  hot?: hotEnum;
 }
 
 export interface ArticlesStoreModel {
@@ -48,7 +48,6 @@ export interface ArticlesStoreModel {
   resetArticles: Action<ArticlesStoreModel>;
   setError: Action<ArticlesStoreModel, string>;
   resetError: Action<ArticlesStoreModel>;
-  getNews: Thunk<ArticlesStoreModel>;
   searchNews: Thunk<ArticlesStoreModel, FilterPropsTop | FilterPropsEvery>;
   setCurrentArticle: Action<ArticlesStoreModel, { article: ArticleProps }>;
 }
@@ -285,7 +284,7 @@ export enum sortByEnum {
 }
 export enum hotEnum{
   hot = "hot",
-  usual = "usual"
+  all = "all"
 }
 // /v2/everything
 export interface everythingReqSearchProps {

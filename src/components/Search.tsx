@@ -23,16 +23,18 @@ export const Search = () => {
       handleSearch(searchValue);
     }
   };
+
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchValue(event.target.value);
   };
+  
   const handleClick = (event: React.BaseSyntheticEvent) => {
     event.preventDefault();
     handleSearch(searchValue);
   };
+  
   return (
     <div>
-    {/* <div className="sticky top-10 z-50"> */}
       <label
         htmlFor="default-search"
         className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
@@ -50,9 +52,9 @@ export const Search = () => {
             xmlns="http://www.w3.org/2000/svg"
           >
             <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
               d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
             ></path>
           </svg>

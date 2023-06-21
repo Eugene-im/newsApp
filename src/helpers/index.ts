@@ -26,12 +26,22 @@ export const errorConverter = (e: any): string => {
 
 
 export const filterConverter = (filter: any) =>{
-  if (filter.hot) {
-    // make request for top-headlines
+  if (filter.hot === "hot") {
+    delete filter.searchIn
+    delete filter.language
+    delete filter.sortBy
   }else{
-    // make request for everything
+    delete filter.sources
+    delete filter.category
+    delete filter.country
   }
-  // if (filter)
-    // return { ...filter, sortBy: "popularity" };
+  delete filter.hot
+  for (const key in filter) {
+    if (filter.hasOwnProperty(key)) {
+      if (filter[key] === "not-set") {
+        delete filter[key]
+      }
+    }
+  }
   return new URLSearchParams(filter as any).toString();
 }

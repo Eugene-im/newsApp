@@ -4,21 +4,23 @@ import {
   ArticleProps,
   ArticlesStoreModel,
   FilterPropsEvery,
+  hotEnum,
 } from "../typesInterfaces";
-import { errorConverter, updatedDataId } from "../helpers";
-import { MOKDATA } from "../mokdata";
+import { errorConverter, filterConverter, updatedDataId } from "../helpers";
 
-const defSource = "bbc-news";
-const defPageSize = 10;
-const defPage = 1;
-const defQuery = "bitcoin";
+const defFilter = {
+  sources: "bbc-news",
+  pageSize: 10,
+  page: 1,
+  q: "bitcoin",
+};
 
 export const store = createStore<ArticlesStoreModel>(
   persist(
     {
       articles: [],
       currentArticle: {} as ArticleProps,
-      filter: {} as FilterPropsEvery,
+      filter: { ...defFilter } as FilterPropsEvery,
       error: "",
       isError: false,
       isLoading: false,
@@ -48,35 +50,20 @@ export const store = createStore<ArticlesStoreModel>(
       resetError: action((state) => {
         state.error = "";
       }),
+      searchNews: thunk(async (actions, payload, helpers) => {
+        let requestUrl;
+        const { filter } = helpers.getState();
+        let mergedFilter = { ...filter, ...payload };
+        if (filter.hot === hotEnum.hot) {
+          delete mergedFilter.q;
+          const filterUrl = filterConverter(mergedFilter);
+          requestUrl = `/top-headlines?${filterUrl}`;
+        } else {
+          const filterUrl = filterConverter(mergedFilter);
+          requestUrl = `/everything?${filterUrl}`;
+        }
 
-      getNews: thunk(async (actions) => {
-        let data;
-        try {
-          // TODO - remove this if statement
-          if (process.env.NODE_ENV === "development") {
-            data = MOKDATA.articles;
-          } else {
-            const res = await API.get(
-              "/top-headlines?sources=bbc-news&pageSize=10"
-            );
-            data = res.data.articles;
-          }
-          const updatedData = updatedDataId(data);
-          actions.addArticles(updatedData);
-        } catch (error) {
-          console.log(error);
-          actions.setError(`oh no, error happened: ${errorConverter(error)}`);
-        }
-      }),
-      searchNews: thunk(async (actions, payload) => {
-        let requestUrl = `/everything?q=${
-          payload.q || defQuery
-        }&pageSize=${defPageSize}&page=${payload.page || defPage}`;
-        if (payload.hot) {
-          requestUrl = `/top-headlines?sources=${defSource}&pageSize=${defPageSize}&page=${
-            payload.page || defPage
-          }`;
-        }
+        
         try {
           const res = await API.get(requestUrl);
           const updatedData = updatedDataId(res.data.articles);
