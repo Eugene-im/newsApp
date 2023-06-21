@@ -11,14 +11,20 @@ export const store = createStore<ArticlesStoreModel>(
       currentArticle: {} as ArticleProps,
       filter: {},
       error: "",
+      isError: false,
+      isLoading: false,
+      hasNextPage: true,
+      setIsLoading: action((state, payload) => {
+        state.isLoading = payload;
+      }),
+      setHasNextPage: action((state, payload) => {
+        state.hasNextPage = payload;
+      }),
       addArticles: action((state, payload) => {
-        console.log(
-          "🚀 ~ file: index.ts:19 ~ addArticles:action ~ state.articles:",
-          state.articles
-        );
         state.articles = [...state.articles, ...payload];
       }),
       setError: action((state, payload) => {
+        state.isError = true;
         state.error = JSON.stringify(payload);
       }),
       resetError: action((state) => {
@@ -33,7 +39,7 @@ export const store = createStore<ArticlesStoreModel>(
             data = MOKDATA.articles;
           } else {
             const res = await API.get(
-              "/top-headlines?sources=bbc-news&pageSize=30"
+              "/top-headlines?sources=bbc-news&pageSize=10"
             );
             data = res.data.articles;
           }
@@ -47,7 +53,7 @@ export const store = createStore<ArticlesStoreModel>(
       searchNews: thunk(async (actions, payload) => {
         try {
           const res = await API.get(
-            `/everything?q=${payload.query}&searchIn=title&pageSize=20&page=${
+            `/everything?q=${payload.query}&searchIn=title&pageSize=10&page=${
               payload.page || 1
             }`
           );

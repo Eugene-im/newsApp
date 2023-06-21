@@ -29,7 +29,12 @@ export interface ArticlesStoreModel {
   articles: ArticleProps[];
   currentArticle: ArticleProps;
   error: string;
+  isError: boolean,
+  isLoading: boolean,
+  hasNextPage: boolean,
   filter: { page?: string; query?: string; hot?: boolean };
+  setIsLoading: Action<ArticlesStoreModel, boolean>;
+  setHasNextPage: Action<ArticlesStoreModel, boolean>;
   addArticles: Action<ArticlesStoreModel, ArticleProps[]>;
   setError: Action<ArticlesStoreModel, any>;
   resetError: Action<ArticlesStoreModel>;

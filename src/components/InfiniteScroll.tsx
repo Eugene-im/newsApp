@@ -1,46 +1,19 @@
-import { useState, useRef, useCallback, useEffect } from "react";
-import usePosts from "../hooks/usePosts";
+import { useState } from "react";
 import { ArticleProps, ArticlesStoreModel } from "../typesInterfaces";
 import Post from "./Post";
 import { Grid } from "@mui/material";
-import { Actions, useStoreActions } from "easy-peasy";
+import { useStoreState } from "easy-peasy";
+import usePosts from "../hooks/usePosts";
 
 const InfiniteScroll = () => {
   const [pageNum, setPageNum] = useState(1);
-  const { setError } = useStoreActions(
-    (actions: Actions<ArticlesStoreModel>) => actions
+  const lastPostRef = usePosts(pageNum, setPageNum);
+
+  const { isLoading, articles } = useStoreState(
+    (state: ArticlesStoreModel) => state
   );
-  const { isLoading, isError, error, results, hasNextPage } = usePosts(pageNum);
-
-  const intObserver = useRef();
-  const lastPostRef = useCallback(
-    (post: ArticleProps | null) => {
-      if (isLoading) return;
-      //@ts-ignore
-      if (intObserver.current) intObserver.current.disconnect();
-      //@ts-ignore
-
-      intObserver.current = new IntersectionObserver((posts) => {
-        if (posts[0].isIntersecting && hasNextPage) {
-          console.log("We are near the last post!");
-          setPageNum((prev) => prev + 1);
-        }
-      });
-      //@ts-ignore
-      if (post) intObserver.current.observe(post);
-    },
-    [isLoading, hasNextPage]
-  );
-  useEffect(() => {
-    isError && lastPostRef(null);
-  }, [lastPostRef, isError]);
-
-  if (isError) {
-    setError({ error: error?.message || error });
-  }
-
-  const content = results.map((post: ArticleProps, i: number) => {
-    if (results.length === i + 1) {
+  const content = articles.map((post: ArticleProps, i: number) => {
+    if (articles.length === i + 1) {
       return <Post key={post.id} ref={lastPostRef} article={post} />;
     }
     return <Post key={post.id} article={post} />;

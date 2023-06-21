@@ -1,55 +1,45 @@
-import { useState, useEffect } from "react";
-import { API } from "../core/api";
-import { updatedDataId } from "../helpers";
-// import { getPostsPage } from '../api/axios'
+import { useStoreState, useStoreActions, Actions } from "easy-peasy";
+import { useRef, useCallback, useEffect } from "react";
+import { ArticlesStoreModel, ArticleProps } from "../typesInterfaces";
 
-// import axios from "axios";
-
-// export const api = axios.create({
-//   baseURL: "https://jsonplaceholder.typicode.com",
-// });
-
-export const getPostsPage = async (pageParam = 1, options = {}) => {
-  const response = await API.get(
-    `/everything?q=bitcoin&searchIn=title&pageSize=20&page=${pageParam}`,
-    options
+const usePosts = (
+  pageNum: number,
+  setPageNum: React.Dispatch<React.SetStateAction<number>>
+) => {
+  const { isLoading, isError, hasNextPage } = useStoreState(
+    (state: ArticlesStoreModel) => state
   );
-  const updatedData = updatedDataId(response.data.articles);
-  return updatedData;
-};
+  const { searchNews } = useStoreActions(
+    (actions: Actions<ArticlesStoreModel>) => actions
+  );
 
-const usePosts = (pageNum = 1) => {
-  const [results, setResults] = useState<any>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isError, setIsError] = useState(false);
-  const [error, setError] = useState<{ message: any }|null>(null);
-  const [hasNextPage, setHasNextPage] = useState(false);
+  const intObserver = useRef();
+  const lastPostRef = useCallback(
+    (post: ArticleProps | null) => {
+      if (isLoading) return;
+      //@ts-ignore
+      if (intObserver.current) intObserver.current.disconnect();
+      //@ts-ignore
+
+      intObserver.current = new IntersectionObserver((posts) => {
+        if (posts[0].isIntersecting && hasNextPage) {
+          console.log("We are near the last post!");
+          setPageNum((prev) => prev + 1);
+        }
+      });
+      //@ts-ignore
+      if (post) intObserver.current.observe(post);
+    },
+    [isLoading, hasNextPage]
+  );
+  useEffect(() => {
+    isError && lastPostRef(null);
+  }, [lastPostRef, isError]);
 
   useEffect(() => {
-    setIsLoading(true);
-    setIsError(false);
-    setError(null);
-
-    const controller = new AbortController();
-    const { signal } = controller;
-
-    getPostsPage(pageNum, { signal })
-      .then((data) => {
-        setResults((prev: any) => [...prev, ...data]);
-        setHasNextPage(Boolean(data.length));
-        setIsLoading(false);
-      })
-      .catch((e) => {
-        setIsLoading(false);
-        if (signal.aborted) return;
-        setIsError(true);
-        setError({ message: e.message });
-      });
-
-    return () => controller.abort();
+    searchNews({ page: pageNum.toString(), query: "bitcoin" });
   }, [pageNum]);
-
-  return { isLoading, isError, error, results, hasNextPage };
+  return lastPostRef;
 };
 
 export default usePosts;
