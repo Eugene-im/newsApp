@@ -12,7 +12,11 @@ jobs:
         node-version: [18.x]
     steps:
       - uses: actions/checkout@v2
-      - run: npm ci && npm run build
+      - run: npm i && npm run build
+        env: 
+          CI: false 
+          REACT_APP_API_URL: ${{ secrets.REACT_APP_API_URL }}
+          REACT_APP_NEWS_API_KEY: ${{ secrets.REACT_APP_NEWS_API_KEY }}
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
