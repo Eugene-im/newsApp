@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { ArticleProps, ArticlesStoreModel } from "../typesInterfaces";
 import Post from "./Post";
-import { Grid } from "@mui/material";
 import { useStoreState } from "easy-peasy";
 import usePosts from "../hooks/usePosts";
 
@@ -21,9 +20,9 @@ const InfiniteScroll = () => {
 
   return (
     <>
-      <Grid container wrap="wrap">
+      <div className="flex flex-wrap">
         {content}
-      </Grid>
+      </div>
       {isLoading && <p className="center">Loading More Posts...</p>}
       <a href="#top">Back to Top</a>
     </>
