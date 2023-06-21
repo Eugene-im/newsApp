@@ -13,14 +13,14 @@ const InfiniteScroll = () => {
   );
   const content = articles.map((post: ArticleProps, i: number) => {
     if (articles.length === i + 1) {
-      return <Post key={post.id} ref={lastPostRef} article={post} />;
+      return <Post key={post.id} ref={lastPostRef} article={post}/>;
     }
     return <Post key={post.id} article={post} />;
   });
 
   return (
     <>
-      <div className="flex flex-wrap">
+      <div className="grid grid-flow-row-dense grid-cols-3 gap-10">
         {content}
       </div>
       {isLoading && <p className="center">Loading More Posts...</p>}

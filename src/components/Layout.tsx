@@ -9,7 +9,7 @@ export function Layout() {
   const isRehydrated = useStoreRehydrated();
   return (
     <div className="App">
-      <header className="App-header">Just NEWS</header>
+      <header className="App-header sticky top-0 z-50">Just NEWS</header>
       <Search />
       {!!error && <ErrorToast message={error} />}
       <main>{isRehydrated ? <Outlet /> : <div>Loading...</div>}</main>
