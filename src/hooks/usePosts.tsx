@@ -6,6 +6,11 @@ import {
   FilterPropsEvery,
 } from "../typesInterfaces";
 
+type TypeRef = {
+  disconnect: () => void;
+  observe: (post: ArticleProps) => void;
+};
+
 const usePosts = (
   pageNum: number,
   setPageNum: React.Dispatch<React.SetStateAction<number>>
@@ -17,22 +22,18 @@ const usePosts = (
     (actions: Actions<ArticlesStoreModel>) => actions
   );
 
-  const intObserver = useRef<HTMLDivElement>();
+  const intObserver = useRef<TypeRef>();
   const lastPostRef = useCallback(
     (post: ArticleProps | null) => {
       if (isLoading) return;
-      // TODO: remove ts-ignore
-      //@ts-ignore
 
       if (intObserver.current) intObserver.current.disconnect();
-      //@ts-ignore
 
       intObserver.current = new IntersectionObserver((posts) => {
         if (posts[0].isIntersecting && hasNextPage) {
           setPageNum((prev) => prev + 1);
         }
-      });
-      //@ts-ignore
+      })as any;
 
       if (post && intObserver.current) intObserver.current.observe(post);
     },

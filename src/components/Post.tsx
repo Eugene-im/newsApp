@@ -1,6 +1,6 @@
 import React, { LegacyRef } from "react";
 import { ArticleProps, ArticlesStoreModel } from "../typesInterfaces";
-import { store } from "../store";
+import { store } from "../store/store";
 import { Actions, useStoreActions } from "easy-peasy";
 import { Link } from "react-router-dom";
 

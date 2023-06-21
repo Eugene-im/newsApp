@@ -25,10 +25,10 @@ export interface ApiResponse {
   articles: ArticleProps[];
 }
 
-export interface FilterPropsEvery extends everythingReqSearchProps {
+export interface FilterPropsEvery extends EverythingReqSearchProps {
   hot?: hotEnum;
 }
-export interface FilterPropsTop extends topHeadlinesReqSearchProps {
+export interface FilterPropsTop extends TopHeadlinesReqSearchProps {
   hot?: hotEnum;
 }
 
@@ -287,7 +287,7 @@ export enum hotEnum{
   all = "all"
 }
 // /v2/everything
-export interface everythingReqSearchProps {
+export interface EverythingReqSearchProps {
   q?: string;
   searchIn: string;
   sources?: string;
@@ -301,11 +301,11 @@ export interface everythingReqSearchProps {
   page?: number;
 }
 
-// example for everythingReqSearchProps.domains = 'bbc.co.uk,techcrunch.com,engadget.com'
+// example for EverythingReqSearchProps.domains = 'bbc.co.uk,techcrunch.com,engadget.com'
 // example for from = '2020-10-10' || "2023-06-21T09:00:35"
 
 // /v2/top-headlines
-export interface topHeadlinesReqSearchProps {
+export interface TopHeadlinesReqSearchProps {
   sources: sourcesEnum;
   category?: categoryEnum;
   country?: countryEnum;

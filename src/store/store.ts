@@ -1,9 +1,10 @@
-import { action, createStore, persist, thunk } from "easy-peasy";
+import { Actions, action, createStore, persist, thunk } from "easy-peasy";
 import { API } from "../core/api";
 import {
   ArticleProps,
   ArticlesStoreModel,
   FilterPropsEvery,
+  FilterPropsTop,
   hotEnum,
 } from "../typesInterfaces";
 import { errorConverter, filterConverter, updatedDataId } from "../helpers";
@@ -13,6 +14,34 @@ const defFilter = {
   pageSize: 10,
   page: 1,
   q: "bitcoin",
+};
+
+const requestFunc = async (
+  actions: Actions<ArticlesStoreModel>,
+  payload: FilterPropsTop | FilterPropsEvery,
+  helpers: any
+) => {
+  let requestUrl;
+  const { filter } = helpers.getState();
+  let mergedFilter = { ...filter, ...payload };
+  if (filter.hot === hotEnum.hot) {
+    delete mergedFilter.q;
+    const filterUrl = filterConverter(mergedFilter);
+    requestUrl = `/top-headlines?${filterUrl}`;
+  } else {
+    const filterUrl = filterConverter(mergedFilter);
+    requestUrl = `/everything?${filterUrl}`;
+  }
+
+  try {
+    const res = await API.get(requestUrl);
+    const updatedData = updatedDataId(res.data.articles);
+    if (Number(payload?.page) === 1 || !payload?.page) actions.resetArticles();
+    actions.addArticles(updatedData);
+  } catch (error) {
+    console.error(error);
+    actions.setError(`oh no, error happened: ${errorConverter(error)}`);
+  }
 };
 
 export const store = createStore<ArticlesStoreModel>(
@@ -28,14 +57,14 @@ export const store = createStore<ArticlesStoreModel>(
       setIsLoading: action((state, payload) => {
         state.isLoading = payload;
       }),
+      setHasNextPage: action((state, payload) => {
+        state.hasNextPage = payload;
+      }),
       setFilter: action((state, payload) => {
         state.filter = { ...state.filter, ...payload };
       }),
       resetFilter: action((state) => {
         state.filter = {} as FilterPropsEvery;
-      }),
-      setHasNextPage: action((state, payload) => {
-        state.hasNextPage = payload;
       }),
       addArticles: action((state, payload) => {
         state.articles = [...state.articles, ...payload];
@@ -50,31 +79,7 @@ export const store = createStore<ArticlesStoreModel>(
       resetError: action((state) => {
         state.error = "";
       }),
-      searchNews: thunk(async (actions, payload, helpers) => {
-        let requestUrl;
-        const { filter } = helpers.getState();
-        let mergedFilter = { ...filter, ...payload };
-        if (filter.hot === hotEnum.hot) {
-          delete mergedFilter.q;
-          const filterUrl = filterConverter(mergedFilter);
-          requestUrl = `/top-headlines?${filterUrl}`;
-        } else {
-          const filterUrl = filterConverter(mergedFilter);
-          requestUrl = `/everything?${filterUrl}`;
-        }
-
-        
-        try {
-          const res = await API.get(requestUrl);
-          const updatedData = updatedDataId(res.data.articles);
-          if (Number(payload?.page) === 1 || !payload?.page)
-            actions.resetArticles();
-          actions.addArticles(updatedData);
-        } catch (error) {
-          console.error(error);
-          actions.setError(`oh no, error happened: ${errorConverter(error)}`);
-        }
-      }),
+      searchNews: thunk(requestFunc),
       setCurrentArticle: action((state, payload) => {
         state.currentArticle = payload.article;
       }),

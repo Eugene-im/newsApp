@@ -3,7 +3,7 @@ import { ArticleProps, ArticlesStoreModel } from "../typesInterfaces";
 import Post from "./Post";
 import { useStoreState } from "easy-peasy";
 import usePosts from "../hooks/usePosts";
-import { Filter } from "./Filter";
+import { Filter } from "./Filter/Filter";
 
 const InfiniteScroll = () => {
   const [pageNum, setPageNum] = useState(1);
