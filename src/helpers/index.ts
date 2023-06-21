@@ -23,3 +23,15 @@ export const errorConverter = (e: any): string => {
   }
   return JSON.stringify(e, null, 2);
 };
+
+
+export const filterConverter = (filter: any) =>{
+  if (filter.hot) {
+    // make request for top-headlines
+  }else{
+    // make request for everything
+  }
+  // if (filter)
+    // return { ...filter, sortBy: "popularity" };
+  return new URLSearchParams(filter as any).toString();
+}

@@ -1,28 +1,26 @@
 import { Actions, useStoreActions } from "easy-peasy";
-import { ArticlesStoreModel } from "../typesInterfaces";
+import { ArticlesStoreModel, FilterPropsEvery } from "../typesInterfaces";
 import { useState } from "react";
 
 export const Search = () => {
   const [searchValue, setSearchValue] = useState("");
-  const { searchNews, getNews } = useStoreActions(
+  const { searchNews } = useStoreActions(
     (actions: Actions<ArticlesStoreModel>) => actions
   );
 
-  const hadleSearch = (value: string) => {
+  const handleSearch = (value: string) => {
+    let query;
     if (value) {
-      searchNews({ query: value });
+      query = { q: value } as FilterPropsEvery;
     } else {
-      getNews();
+      query = {} as FilterPropsEvery;
     }
-  };
-
-  const handleBlur = (event: React.BaseSyntheticEvent) => {
-    hadleSearch(event.target.value);
+    searchNews(query as FilterPropsEvery);
   };
 
   const handleKeyDownEnter = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
-      hadleSearch(searchValue);
+      handleSearch(searchValue);
     }
   };
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -30,11 +28,11 @@ export const Search = () => {
   };
   const handleClick = (event: React.BaseSyntheticEvent) => {
     event.preventDefault();
-    hadleSearch(searchValue);
+    handleSearch(searchValue);
   };
   return (
-
-    <div className="sticky top-10 z-50">
+    <div>
+    {/* <div className="sticky top-10 z-50"> */}
       <label
         htmlFor="default-search"
         className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
@@ -65,7 +63,6 @@ export const Search = () => {
           className="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           placeholder="Search..."
           required
-          onBlur={handleBlur}
           onKeyDown={handleKeyDownEnter}
           onChange={handleChange}
         />

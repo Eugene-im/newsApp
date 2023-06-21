@@ -1,6 +1,10 @@
 import { useStoreState, useStoreActions, Actions } from "easy-peasy";
 import { useRef, useCallback, useEffect } from "react";
-import { ArticlesStoreModel, ArticleProps } from "../typesInterfaces";
+import {
+  ArticlesStoreModel,
+  ArticleProps,
+  FilterPropsEvery,
+} from "../typesInterfaces";
 
 const usePosts = (
   pageNum: number,
@@ -31,6 +35,7 @@ const usePosts = (
       //@ts-ignore
       if (post) intObserver.current.observe(post);
     },
+    // eslint-disable-next-line
     [isLoading, hasNextPage]
   );
   useEffect(() => {
@@ -38,8 +43,8 @@ const usePosts = (
   }, [lastPostRef, isError]);
 
   useEffect(() => {
-    searchNews({ page: pageNum.toString(), query: "bitcoin" });
-  }, [pageNum]);
+    searchNews({ page: pageNum, q: "bitcoin" } as FilterPropsEvery);
+  }, [pageNum, searchNews]);
   return lastPostRef;
 };
 

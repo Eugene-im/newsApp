@@ -1,15 +1,24 @@
 import { action, createStore, persist, thunk } from "easy-peasy";
 import { API } from "../core/api";
-import { ArticleProps, ArticlesStoreModel } from "../typesInterfaces";
+import {
+  ArticleProps,
+  ArticlesStoreModel,
+  FilterPropsEvery,
+} from "../typesInterfaces";
 import { errorConverter, updatedDataId } from "../helpers";
 import { MOKDATA } from "../mokdata";
+
+const defSource = "bbc-news";
+const defPageSize = 10;
+const defPage = 1;
+const defQuery = "bitcoin";
 
 export const store = createStore<ArticlesStoreModel>(
   persist(
     {
       articles: [],
       currentArticle: {} as ArticleProps,
-      filter: {},
+      filter: {} as FilterPropsEvery,
       error: "",
       isError: false,
       isLoading: false,
@@ -17,11 +26,20 @@ export const store = createStore<ArticlesStoreModel>(
       setIsLoading: action((state, payload) => {
         state.isLoading = payload;
       }),
+      setFilter: action((state, payload) => {
+        state.filter = { ...state.filter, ...payload };
+      }),
+      resetFilter: action((state) => {
+        state.filter = {} as FilterPropsEvery;
+      }),
       setHasNextPage: action((state, payload) => {
         state.hasNextPage = payload;
       }),
       addArticles: action((state, payload) => {
         state.articles = [...state.articles, ...payload];
+      }),
+      resetArticles: action((state) => {
+        state.articles = [];
       }),
       setError: action((state, payload) => {
         state.isError = true;
@@ -47,25 +65,27 @@ export const store = createStore<ArticlesStoreModel>(
           actions.addArticles(updatedData);
         } catch (error) {
           console.log(error);
-          actions.setError(
-            `oh no, error happened: ${errorConverter(error)}`
-          );
+          actions.setError(`oh no, error happened: ${errorConverter(error)}`);
         }
       }),
       searchNews: thunk(async (actions, payload) => {
+        let requestUrl = `/everything?q=${
+          payload.q || defQuery
+        }&pageSize=${defPageSize}&page=${payload.page || defPage}`;
+        if (payload.hot) {
+          requestUrl = `/top-headlines?sources=${defSource}&pageSize=${defPageSize}&page=${
+            payload.page || defPage
+          }`;
+        }
         try {
-          const res = await API.get(
-            `/everything?q=${payload.query}&searchIn=title&pageSize=10&page=${
-              payload.page || 1
-            }`
-          );
+          const res = await API.get(requestUrl);
           const updatedData = updatedDataId(res.data.articles);
+          if (Number(payload?.page) === 1 || !payload?.page)
+            actions.resetArticles();
           actions.addArticles(updatedData);
         } catch (error) {
           console.error(error);
-          actions.setError(
-            `oh no, error happened: ${errorConverter(error)}`
-          );
+          actions.setError(`oh no, error happened: ${errorConverter(error)}`);
         }
       }),
       setCurrentArticle: action((state, payload) => {

@@ -24,7 +24,7 @@ export const ErrorToast = ({ message }: { message: string }) => {
     setTimeout(() => {
       resetError();
     }, 3000);
-  }, []);
+  }, [resetError]);
   const handleClick = () => {
     resetError();
   };
