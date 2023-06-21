@@ -29,6 +29,7 @@ export const ErrorToast = ({ message }: { message: string }) => {
   return (
     <div
       className="error-toast"
+      // TODO: remove ts-ignore
       //@ts-ignore
       style={{ ...errorStyle }}
       onClick={handleClick}

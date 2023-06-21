@@ -17,6 +17,7 @@ const usePosts = (
   const lastPostRef = useCallback(
     (post: ArticleProps | null) => {
       if (isLoading) return;
+      // TODO: remove ts-ignore
       //@ts-ignore
       if (intObserver.current) intObserver.current.disconnect();
       //@ts-ignore

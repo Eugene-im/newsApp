@@ -1,7 +1,7 @@
 import { action, createStore, persist, thunk } from "easy-peasy";
 import { API } from "../core/api";
 import { ArticleProps, ArticlesStoreModel } from "../typesInterfaces";
-import { updatedDataId } from "../helpers";
+import { errorConverter, updatedDataId } from "../helpers";
 import { MOKDATA } from "../mokdata";
 
 export const store = createStore<ArticlesStoreModel>(
@@ -47,7 +47,9 @@ export const store = createStore<ArticlesStoreModel>(
           actions.addArticles(updatedData);
         } catch (error) {
           console.log(error);
-          actions.setError({ error });
+          actions.setError(
+            `oh no, error happened: ${errorConverter(error)}`
+          );
         }
       }),
       searchNews: thunk(async (actions, payload) => {
@@ -60,8 +62,10 @@ export const store = createStore<ArticlesStoreModel>(
           const updatedData = updatedDataId(res.data.articles);
           actions.addArticles(updatedData);
         } catch (error) {
-          console.log(error);
-          actions.setError({ error });
+          console.error(error);
+          actions.setError(
+            `oh no, error happened: ${errorConverter(error)}`
+          );
         }
       }),
       setCurrentArticle: action((state, payload) => {
@@ -71,7 +75,7 @@ export const store = createStore<ArticlesStoreModel>(
     {
       storage: "localStorage",
       mergeStrategy: "mergeShallow",
-      allow: ["articles","currentArticle"],
+      allow: ["articles", "currentArticle"],
     }
   )
 );

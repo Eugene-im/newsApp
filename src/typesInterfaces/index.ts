@@ -36,7 +36,7 @@ export interface ArticlesStoreModel {
   setIsLoading: Action<ArticlesStoreModel, boolean>;
   setHasNextPage: Action<ArticlesStoreModel, boolean>;
   addArticles: Action<ArticlesStoreModel, ArticleProps[]>;
-  setError: Action<ArticlesStoreModel, any>;
+  setError: Action<ArticlesStoreModel, string>;
   resetError: Action<ArticlesStoreModel>;
   getNews: Thunk<ArticlesStoreModel>;
   searchNews: Thunk<ArticlesStoreModel, { page?: string; query?: string }>;

@@ -3,9 +3,11 @@ import { Actions, useStoreActions } from "easy-peasy";
 import { ArticlesStoreModel } from "../typesInterfaces";
 
 export const Search = () => {
-  const { searchNews, getNews } = useStoreActions((actions: Actions<ArticlesStoreModel>) => actions);
+  const { searchNews, getNews } = useStoreActions(
+    (actions: Actions<ArticlesStoreModel>) => actions
+  );
 
-  const hadleSearch = (event: any) => {
+  const hadleSearch = (event: React.BaseSyntheticEvent) => {
     if (event.target.value) {
       searchNews({ query: event.target.value });
     } else {
@@ -13,11 +15,11 @@ export const Search = () => {
     }
   };
 
-  const handleBlur = (event: any) => {
+  const handleBlur = (event: React.BaseSyntheticEvent) => {
     hadleSearch(event);
   };
 
-  const handleKeyDownEnter = (event: any) => {
+  const handleKeyDownEnter = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
       hadleSearch(event);
     }
