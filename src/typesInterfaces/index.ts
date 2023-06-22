@@ -28,9 +28,6 @@ export interface ApiResponse {
 export interface FilterPropsEvery extends EverythingReqSearchProps {
   hot?: hotEnum;
 }
-export interface FilterPropsTop extends TopHeadlinesReqSearchProps {
-  hot?: hotEnum;
-}
 
 export interface ArticlesStoreModel {
   articles: ArticleProps[];
@@ -39,8 +36,8 @@ export interface ArticlesStoreModel {
   isError: boolean;
   isLoading: boolean;
   hasNextPage: boolean;
-  filter: FilterPropsTop | FilterPropsEvery;
-  setFilter: Action<ArticlesStoreModel, FilterPropsTop | FilterPropsEvery>;
+  filter: EverythingReqSearchProps;
+  setFilter: Action<ArticlesStoreModel, EverythingReqSearchProps>;
   resetFilter: Action<ArticlesStoreModel>;
   setIsLoading: Action<ArticlesStoreModel, boolean>;
   setHasNextPage: Action<ArticlesStoreModel, boolean>;
@@ -48,7 +45,7 @@ export interface ArticlesStoreModel {
   resetArticles: Action<ArticlesStoreModel>;
   setError: Action<ArticlesStoreModel, string>;
   resetError: Action<ArticlesStoreModel>;
-  searchNews: Thunk<ArticlesStoreModel, FilterPropsTop | FilterPropsEvery>;
+  searchNews: Thunk<ArticlesStoreModel, EverythingReqSearchProps>;
   setCurrentArticle: Action<ArticlesStoreModel, { article: ArticleProps }>;
 }
 

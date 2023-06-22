@@ -1,11 +1,13 @@
-import { v4 as uuidv4 } from "uuid";
 import { ArticleProps } from "../typesInterfaces";
+
+export const uniqueID = () =>
+  window.crypto.getRandomValues(new Uint32Array(1))[0].toString();
 
 export const updatedDataId = (items: ArticleProps[]) => {
   return items.map((item) => {
     return {
       ...item,
-      id: uuidv4(),
+      id: item.title?.toLowerCase().replace(/[^a-zA-Z0-9 ]/g, "").split(" ").join("-") || uniqueID(),
       publishedAt: item.publishedAt
         .split("T")
         .join(" ")
@@ -24,24 +26,23 @@ export const errorConverter = (e: any): string => {
   return JSON.stringify(e, null, 2);
 };
 
-
-export const filterConverter = (filter: any) =>{
+export const filterConverter = (filter: any) => {
   if (filter.hot === "hot") {
-    delete filter.searchIn
-    delete filter.language
-    delete filter.sortBy
-  }else{
-    delete filter.sources
-    delete filter.category
-    delete filter.country
+    delete filter.searchIn;
+    delete filter.language;
+    delete filter.sortBy;
+  } else {
+    delete filter.sources;
+    delete filter.category;
+    delete filter.country;
   }
-  delete filter.hot
+  delete filter.hot;
   for (const key in filter) {
     if (filter.hasOwnProperty(key)) {
       if (filter[key] === "not-set") {
-        delete filter[key]
+        delete filter[key];
       }
     }
   }
   return new URLSearchParams(filter as any).toString();
-}
+};

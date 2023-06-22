@@ -1,12 +1,6 @@
 import { Actions, action, createStore, persist, thunk } from "easy-peasy";
 import { API } from "../core/api";
-import {
-  ArticleProps,
-  ArticlesStoreModel,
-  FilterPropsEvery,
-  FilterPropsTop,
-  hotEnum,
-} from "../typesInterfaces";
+import { ArticleProps, ArticlesStoreModel, EverythingReqSearchProps } from "../typesInterfaces";
 import { errorConverter, filterConverter, updatedDataId } from "../helpers";
 
 const defFilter = {
@@ -18,20 +12,14 @@ const defFilter = {
 
 const requestFunc = async (
   actions: Actions<ArticlesStoreModel>,
-  payload: FilterPropsTop | FilterPropsEvery,
+  payload: EverythingReqSearchProps,
   helpers: any
 ) => {
   let requestUrl;
   const { filter } = helpers.getState();
   let mergedFilter = { ...filter, ...payload };
-  if (filter.hot === hotEnum.hot) {
-    delete mergedFilter.q;
-    const filterUrl = filterConverter(mergedFilter);
-    requestUrl = `/top-headlines?${filterUrl}`;
-  } else {
-    const filterUrl = filterConverter(mergedFilter);
-    requestUrl = `/everything?${filterUrl}`;
-  }
+  const filterUrl = filterConverter(mergedFilter);
+  requestUrl = `/everything?${filterUrl}`;
 
   try {
     const res = await API.get(requestUrl);
@@ -49,7 +37,7 @@ export const store = createStore<ArticlesStoreModel>(
     {
       articles: [],
       currentArticle: {} as ArticleProps,
-      filter: { ...defFilter } as FilterPropsEvery,
+      filter: { ...defFilter } as EverythingReqSearchProps,
       error: "",
       isError: false,
       isLoading: false,
@@ -64,7 +52,7 @@ export const store = createStore<ArticlesStoreModel>(
         state.filter = { ...state.filter, ...payload };
       }),
       resetFilter: action((state) => {
-        state.filter = {} as FilterPropsEvery;
+        state.filter = { ...defFilter } as EverythingReqSearchProps;
       }),
       addArticles: action((state, payload) => {
         state.articles = [...state.articles, ...payload];
